@@ -18,7 +18,7 @@ const auth = (req, res) => {
   const credentials = req.body;
   authRepo(credentials, (err, result) => {
     if (err) return res.status(500);
-    
+
     if ( ! result ) return res.status(401).json( { message : "Wrong credentials." } );
 
     // Generate token

@@ -16,14 +16,15 @@ async function hashPassword(password) {
   }
 }
 
-async function verifyPassword(password, hashedPassword) {
+// Compare a password with a hashed password
+const comparePasswords = async (plainPassword, hashedPassword) => {
   try {
-    const isMatch = await bcrypt.compare(password, hashedPassword);
-    return isMatch;
+    const match = await bcrypt.compare(plainPassword, hashedPassword);
+    return match; // returns true if passwords match, false otherwise
   } catch (error) {
-    throw new Error('Error verifying password: ' + error.message);
+    console.error('Error comparing passwords:', error);
   }
-}
+};
 
 
 // Access environment variables
@@ -97,12 +98,22 @@ const getUsers = (callback) => {
 };
 
 const authRepo = async (credential, callback) => {
-  connection.query('SELECT password FROM users', (err, results) => {
+  connection.query('SELECT password FROM users WHERE email = (?)', [credential.email], async (err, results) => {
     if (err) return callback(err, null);
-
-    if (! verifyPassword(results.password, credential.password)) return callback(null, false);
-
-    return callback(null, true);
+    
+    // Check if user exists
+    if (results.length === 0) return callback(null, false);
+    const hashedPassword = results[0].password;
+    try 
+    {
+        comparePasswords(credential.password, hashedPassword).then(isMatch => {
+          return callback(null, isMatch);
+        });
+    }
+    catch (error) {
+      callback(error, null);
+    }
+    
 });
 }
 
