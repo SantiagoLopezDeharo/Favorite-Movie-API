@@ -51,7 +51,8 @@ const addUser = (req, res) => {
           console.log(err);
           return res.status(500).json({ error: 'Error creating user' });
       }
-      res.json({ message: 'User created' });
+      if ( ! result ) res.json({ message:'Email already in use' });
+      else res.json({ message: 'User created' });
   });
 };
 

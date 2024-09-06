@@ -77,15 +77,22 @@ const initializeTables = () => {
 
 // Function to create a user
 const createUser = async (user, callback) =>  {
-  let hashed = await hashPassword( user.password );
-  const query = 'INSERT INTO users (email, firstName, lastName, password) VALUES (?, ?, ?, ?)';
-  const values = [user.email, user.firstName, user.lastName, hashed];
+  connection.query('SELECT * FROM users WHERE email = (?)', [user.email], async (err, results) => {
+    if (err) return callback(err, null);
+    
+    let cant = results.length;
+    if (cant > 0) return callback(null, false);
 
-  connection.query(query, values, (err, results) => {
+    let hashed = await hashPassword( user.password );
+    const query = 'INSERT INTO users (email, firstName, lastName, password) VALUES (?, ?, ?, ?)';
+    const values = [user.email, user.firstName, user.lastName, hashed];
+
+    connection.query(query, values, (err, results) => {
       if (err) return callback(err, null);
       
-      return callback(null, results);
+      return callback(null, true);
   });
+  });  
 };
 
 // Function to get all users from the database
