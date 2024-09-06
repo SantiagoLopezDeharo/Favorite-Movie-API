@@ -81,9 +81,8 @@ const createUser = async (user, callback) =>  {
   const values = [user.email, user.firstName, user.lastName, hashed];
 
   connection.query(query, values, (err, results) => {
-      if (err) {
-          return callback(err, null);
-      }
+      if (err) return callback(err, null);
+      
       return callback(null, results);
   });
 };
@@ -91,12 +90,21 @@ const createUser = async (user, callback) =>  {
 // Function to get all users from the database
 const getUsers = (callback) => {
   connection.query('SELECT email, firstName, lastName FROM users', (err, results) => {
-      if (err) {
-          return callback(err, null);
-      }
+      if (err) return callback(err, null);
+      
       return callback(null, results);
   });
 };
 
+const authRepo = async (credential, callback) => {
+  connection.query('SELECT password FROM users', (err, results) => {
+    if (err) return callback(err, null);
+
+    if (! verifyPassword(results.password, credential.password)) return callback(null, false);
+
+    return callback(null, true);
+});
+}
+
 // Export the initialization function and user methods
-module.exports = { initializeTables, getUsers, createUser };
+module.exports = { initializeTables, getUsers, createUser, authRepo };
