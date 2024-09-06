@@ -90,7 +90,7 @@ const createUser = async (user, callback) =>  {
 
 // Function to get all users from the database
 const getUsers = (callback) => {
-  connection.query('SELECT * FROM users', (err, results) => {
+  connection.query('SELECT email, firstName, lastName FROM users', (err, results) => {
       if (err) {
           return callback(err, null);
       }
