@@ -1,9 +1,9 @@
 const express = require('express');
 const { authenticateToken } = require('../controllers/UserController');
-const { listMovies } = require('../controllers/MovieController');
+const { listMovies, addToFav } = require('../controllers/MovieController');
 const router = express.Router();
 
-router.get('/movies', authenticateToken, listMovies);
-
+router.get('/list', authenticateToken, listMovies);
+router.post("/fav", authenticateToken, addToFav);
 
 module.exports = router;

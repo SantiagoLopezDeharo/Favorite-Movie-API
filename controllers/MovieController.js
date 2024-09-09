@@ -1,6 +1,8 @@
 require('dotenv').config();
 const axios = require('axios');
 
+const { getFavMovies, addFavToUser } = require("../repos/MovieRepo");
+
 const apiKey = process.env.api_key;
 
 const listMovies = (req, res) => 
@@ -41,4 +43,19 @@ const listMovies = (req, res) =>
 
 }
 
-module.exports = { listMovies };
+const addToFav = (req, res) =>
+{
+    const usrEmail = req.user.username;
+    const movieId = req.body.movieId;
+
+    if (!movieId && !(movieId instanceof int)) return res.status(403).json({message:"Movie Id missing or invalid"})
+
+    addFavToUser(usrEmail, movieId, (err) =>
+    {
+        if (err) return res.status(500).json({message:"Internal server error."});
+
+        return res.status(200).json({message:"Movies added to favorites of the user with email: " + usrEmail})
+    });
+}
+
+module.exports = { listMovies, addToFav };

@@ -54,7 +54,7 @@ connection.connect((err) => {
 
 
 // Check if the table exists, if not, create it
-const initializeTables = () => {
+const initializeUserTable = () => {
   const createUserTableQuery = `
       CREATE TABLE IF NOT EXISTS users (
           id INT AUTO_INCREMENT PRIMARY KEY,
@@ -125,4 +125,4 @@ const authRepo = async (credential, callback) => {
 }
 
 // Export the initialization function and user methods
-module.exports = { initializeTables, getUsers, createUser, authRepo };
+module.exports = { initializeUserTable, getUsers, createUser, authRepo };
