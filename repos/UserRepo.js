@@ -113,7 +113,7 @@ const authRepo = async (credential, callback) => {
     const hashedPassword = results[0].password;
     try 
     {
-        comparePasswords(credential.password, hashedPassword).then(isMatch => {
+        await comparePasswords(credential.password, hashedPassword).then(isMatch => {
           return callback(null, isMatch);
         });
     }
