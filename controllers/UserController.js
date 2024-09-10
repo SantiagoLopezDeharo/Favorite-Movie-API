@@ -2,6 +2,8 @@ const { getUsers, createUser, authRepo } = require('../repos/UserRepo');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
+const blacklist = new Set(); // This is kept temporarly, meaning that if the server restarts, the still valide tokens will be taken again,
+                             // for this reason I will set up a database for this in the future.
 
 const secretKey = process.env.JWT_KEY;
 
@@ -38,7 +40,9 @@ const authenticateToken = (req, res, next) => {
   const token = authHeader.split(' ')[1];
   
   if (token == null) return res.status(401).send('Token missing');
-  
+
+  if ( blacklist.has(token) ) return res.status(403).send('Invalid token');
+
   jwt.verify(token, secretKey, (err, user) => {
     if (err) return res.status(403).send('Invalid token');
     req.user = user;
@@ -59,4 +63,16 @@ const addUser = (req, res) => {
   });
 };
 
-module.exports = { getAllUsers, addUser, auth, authenticateToken };
+const invalidateToken = (req, res) => {
+  const authHeader = req.headers['authorization'];
+
+  if (! authHeader ) return res.status(403).json({message:"Bad request."});
+
+  const token = authHeader.split(' ')[1];
+
+  blacklist.add(token);
+
+  return res.status(200).json({message:"Token invalidated."})
+}
+
+module.exports = { getAllUsers, addUser, auth, authenticateToken, invalidateToken };
