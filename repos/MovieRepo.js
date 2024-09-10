@@ -47,7 +47,7 @@ const initializeMovieTable = () => {
 const getFavMovies = (usrEmail, callback) => {
     const query = "SELECT movieId FROM favMovies WHERE email = (?)";
     
-    connection.query(query, [usrId], (err, results) =>
+    connection.query(query, [usrEmail], (err, results) =>
     {
         if (err) return callback(err, null);
 

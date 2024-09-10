@@ -58,4 +58,14 @@ const addToFav = (req, res) =>
     });
 }
 
+const listFav = (req, res) =>
+{
+    const usrEmail = req.user.username;
+
+    getFavMovies(usrEmail, (err, favs)=>{
+        if (err) return res.status(500).json({message:"Internal server error."});
+        
+    });
+}
+
 module.exports = { listMovies, addToFav };
