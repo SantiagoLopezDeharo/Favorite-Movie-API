@@ -1,9 +1,10 @@
-const { getUsers, createUser, authRepo } = require('../repos/UserRepo');
+const { getUsers, createUser, authRepo } = require('../repos/UserRepo'); // Repo for managing user infomation
+const { addToken, tokenInBlackList  } = require("../repos/TokensRepo");  // Repo for managinf invalidated tokens via logout
+
+
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-const blacklist = new Set(); // This is kept temporarly, meaning that if the server restarts, the still valide tokens will be taken again,
-                             // for this reason I will set up a database for this in the future.
 
 const secretKey = process.env.JWT_KEY;
 
@@ -41,13 +42,19 @@ const authenticateToken = (req, res, next) => {
   
   if (token == null) return res.status(401).send('Token missing');
 
-  if ( blacklist.has(token) ) return res.status(403).send('Invalid token');
+  tokenInBlackList(token, (err, is) => {
 
-  jwt.verify(token, secretKey, (err, user) => {
-    if (err) return res.status(403).send('Invalid token');
-    req.user = user;
-    next();
-  });
+    if (err) return res.status(500).send("Internal server error.")
+
+    if ( is ) return res.status(403).send('Invalid token');
+
+    jwt.verify(token, secretKey, (err, user) => {
+      if (err) return res.status(403).send('Invalid token');
+      req.user = user;
+      next();
+    });
+  })
+
 };
 
 const addUser = (req, res) => {
@@ -70,9 +77,13 @@ const invalidateToken = (req, res) => {
 
   const token = authHeader.split(' ')[1];
 
-  blacklist.add(token);
+  addToken(token, (err) =>
+  {
+    if (err) return res.stats(500).send("Internal server error.");
 
-  return res.status(200).json({message:"Token invalidated."})
+    return res.status(200).json({message:"Token invalidated."})
+  })
+
 }
 
 module.exports = { getAllUsers, addUser, auth, authenticateToken, invalidateToken };
