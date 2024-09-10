@@ -32,7 +32,10 @@ const auth = (req, res) => {
 // Middleware to verify token
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+
+  if (! authHeader ) return res.status(403).json({message:"Bad request."});
+
+  const token = authHeader.split(' ')[1];
   
   if (token == null) return res.status(401).send('Token missing');
   
