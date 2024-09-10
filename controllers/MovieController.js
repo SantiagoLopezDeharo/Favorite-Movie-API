@@ -58,14 +58,44 @@ const addToFav = (req, res) =>
     });
 }
 
+// Function to fetch movie data by ID
+const fetchMovieData = async (id) => {
+    try 
+    {
+      const response = await axios.get(`https://api.themoviedb.org/3/movie/${id}`, {
+        params: {
+          api_key: apiKey
+        }
+      });
+      return response.data;
+    } 
+    catch (error) 
+    {
+      console.error(`Error fetching data for movie ID ${id}:`, error);
+      return null;
+    }
+  };
+
 const listFav = (req, res) =>
 {
     const usrEmail = req.user.username;
 
-    getFavMovies(usrEmail, (err, favs)=>{
+
+    getFavMovies(usrEmail, async (err, favs)=>
+    {
         if (err) return res.status(500).json({message:"Internal server error."});
-        
+
+        let movieIds = [];
+
+        for (let i = 0; i < favs.length ; i++) movieIds.push(favs[i].movieId);
+
+
+        const requests = movieIds.map(id => fetchMovieData(id));
+        let moviesData = await Promise.all(requests); // We send all the requests in parallel
+        moviesData = moviesData.filter(data => data !== null); // Filter out any null results
+
+        return res.status(200).json(moviesData);
     });
 }
 
-module.exports = { listMovies, addToFav };
+module.exports = { listMovies, addToFav, listFav };
