@@ -51,10 +51,10 @@ const authenticateToken = (req, res, next) => {
 
     if (err) return res.status(500).send("Internal server error.")
 
-    if ( is ) return res.status(403).send('Invalid token');
+    if ( is ) return res.status(401).send('Invalid token');
 
     jwt.verify(token, secretKey, (err, user) => {
-      if (err) return res.status(403).send('Invalid token');
+      if (err) return res.status(401).send('Invalid token');
       req.user = user;
       next();
     });
