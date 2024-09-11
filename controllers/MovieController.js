@@ -8,7 +8,7 @@ const apiKey = process.env.api_key;
 const listMovies = (req, res) => 
 {
     
-    const query = req.query.query;
+    const query = req.query.keyword;
     if (query)
     {
         axios.get(`https://api.themoviedb.org/3/search/keyword`, {
@@ -18,7 +18,11 @@ const listMovies = (req, res) =>
             }
         }
         ).then(response => {
-                return res.status(200).json(response.data.results);
+                json_data = response.data.results;
+                json_data.forEach(element => {
+                    element.suggestionScore = Math.floor(Math.random() * 100); // Adding a random number between 0 and 99
+                  });
+                return res.status(200).json(json_data);
             }
         ).catch(error => {
               return res.status(500).json({message:"Internal server error."});
@@ -33,7 +37,11 @@ const listMovies = (req, res) =>
             }
         }
         ).then(response => {
-                return res.status(200).json(response.data.results);
+                json_data = response.data.results;
+                json_data.forEach(element => {
+                    element.suggestionScore = Math.floor(Math.random() * 100); // Adding a random number between 0 and 99
+                });
+                return res.status(200).json(json_data);
             }
         ).catch(error => {
               return res.status(500).json({message:"Internal server error."});
