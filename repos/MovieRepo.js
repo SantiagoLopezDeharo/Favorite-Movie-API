@@ -31,7 +31,8 @@ const initializeMovieTable = () => {
     const createUserTableQuery = `
         CREATE TABLE IF NOT EXISTS favMovies (
             movieId INT NOT NULL,
-            userId INT NOT NULL
+            userId INT NOT NULL,
+            addedAt DATETIME DEFAULT CURRENT_TIMESTAMP
         );
     `;
   
