@@ -104,6 +104,12 @@ const listFav = (req, res) =>
         let moviesData = await Promise.all(requests); // We send all the requests in parallel
         moviesData = moviesData.filter(data => data !== null); // Filter out any null results
 
+        moviesData.forEach(element => {
+            element.suggestionScore = Math.floor(Math.random() * 100); // Adding a random number between 0 and 99
+        });
+
+        moviesData.sort((a, b) => b.suggestionScore - a.suggestionScore); // We use js built-in sorting that already has O(n*log(n)) time complexity
+
         return res.status(200).json(moviesData);
     });
 }
