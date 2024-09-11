@@ -58,22 +58,30 @@ const authenticateToken = (req, res, next) => {
 };
 
 const addUser = (req, res) => {
-  const user = req.body;  
+  const user = req.body;
+  
+  if (! (user.email && user.firstName && user.lastName && user.password) ) return res.status(403).send("Invalid attributes.");
+
+  if ( user.password.length < 8) return res.status(403).send("Password must be 8 characters long.");
+
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  if (! emailRegex.test(user.email)) return res.status(403).send("Invalid email.");
 
   createUser(user, (err, result) => {
-      if (err) {
-          console.log(err);
-          return res.status(500).json({ error: 'Error creating user' });
-      }
-      if ( ! result ) res.json({ message:'Email already in use' });
-      else res.json({ message: 'User created' });
+
+      if (err) return res.status(500).send('Internal error trying to create user');
+      
+      if ( ! result ) res.status(403).send('Email already in use');
+
+      else res.status(200).send('User created');
   });
 };
 
 const invalidateToken = (req, res) => {
   const authHeader = req.headers['authorization'];
 
-  if (! authHeader ) return res.status(403).json({message:"Bad request."});
+  if (! authHeader ) return res.status(403).send("Bad request.");
 
   const token = authHeader.split(' ')[1];
 
