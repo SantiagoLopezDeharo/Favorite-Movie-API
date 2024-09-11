@@ -19,10 +19,15 @@ const getAllUsers = (req, res) => {
 
 const auth = (req, res) => {
   const credentials = req.body;
-  authRepo(credentials, (err, result) => {
+  authRepo(credentials, (err, result, cred) => {
     if (err) return res.status(500);
 
-    if ( ! result ) return res.status(401).json( { message : "Wrong credentials." } );
+    if ( ! result ) 
+    {
+      if (cred == 1)  return res.status(401).send( "Email is not registered." );
+      
+      return res.status(401).send("Wrong password.");
+    }
 
     // Generate token
     let username = credentials.email;

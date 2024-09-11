@@ -109,12 +109,13 @@ const authRepo = async (credential, callback) => {
     if (err) return callback(err, null);
     
     // Check if user exists
-    if (results.length === 0) return callback(null, false);
+    if (results.length === 0) return callback(null, false, 1);
+
     const hashedPassword = results[0].password;
     try 
     {
         await comparePasswords(credential.password, hashedPassword).then(isMatch => {
-          return callback(null, isMatch);
+          return callback(null, isMatch, isMatch ? null:2);
         });
     }
     catch (error) {
