@@ -1,4 +1,12 @@
-# Favorite Movies API
+# Favorite Movies API ⭐️
+
+## Tech Stack
+
+| NodeJs  | JavaScript | MySQL | Docker |
+| ------- | ---------- | ----- | ------ |
+| <img height="60" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/node_js.png"> | <img height="60" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/JavaScript-logo.png/768px-JavaScript-logo.png"> | <img height="60" src="https://brandlogo.org/wp-content/uploads/2024/02/MySQL-Logo-300x300.png.webp"> | <img height="60" src="https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/97_Docker_logo_logos-512.png"> |
+
+
 
 ## Descripción
 
